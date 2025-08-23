@@ -10,7 +10,7 @@ datasource db {
 
 model User {
   id        Int        @id @default(autoincrement())
-  usuario   String     @unique
+  user      String     @unique
   password  String
   playlists Playlist[]
 }
