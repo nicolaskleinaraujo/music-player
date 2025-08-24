@@ -1,10 +1,11 @@
 // Modules
 import { Request, Response } from "express"
 import prisma from "../config/prisma"
+import bcrypt from "bcryptjs"
 
 interface UserDTO {
     user: string,
-    password: string
+    password: string,
 }
 
 const createUser = async(req: Request, res: Response) => {
@@ -22,10 +23,14 @@ const createUser = async(req: Request, res: Response) => {
             return
         }
 
+        // Hashes the password
+        const salt = await bcrypt.genSalt(10)
+        const hash = await bcrypt.hash(password, salt)
+
         const newUser = await prisma.user.create({
             data: {
                 user,
-                password,
+                password: hash,
             }
         })
 
@@ -34,3 +39,5 @@ const createUser = async(req: Request, res: Response) => {
         res.status(500).json({ msg: "Erro interno, tente novamente" })
     }
 }
+
+export default createUser
