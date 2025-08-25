@@ -1,9 +1,10 @@
 // Modules
+import type { AxiosResponse } from "axios"
 import dbFetch from "../utils/axios"
 
-async function createPlaylist(name: string, userId: number) {
+const createPlaylist = async(playlistName: string, userId: number): Promise<AxiosResponse> => {
     const res = await dbFetch.post("/playlist", {
-        name,
+        name: playlistName,
         userId,
     })
 

@@ -2,8 +2,11 @@
 import dbFetch from "../utils/axios"
 import { useContext, useState } from "react"
 import { UserContext } from "../context/UserContext"
+import { useNavigate } from "react-router-dom"
 
 const Login = () => {
+    const navigate = useNavigate()
+
     const [user, setUser] = useState("")
     const [password, setPassword] = useState("")
 
@@ -17,6 +20,7 @@ const Login = () => {
             })
 
             setUserId(res.data.searchUser.id)
+            navigate("/")
         } catch (error) {
             console.log(error)
         }
