@@ -1,10 +1,13 @@
 // Modules
 import dbFetch from "../utils/axios"
-import { useState } from "react"
+import { useContext, useState } from "react"
+import { UserContext } from "../context/UserContext"
 
 const Login = () => {
     const [user, setUser] = useState("")
     const [password, setPassword] = useState("")
+
+    const { setUserId } = useContext(UserContext)
 
     const handleLogin = async() => {
         try {
@@ -13,7 +16,7 @@ const Login = () => {
                 password,
             })
 
-            console.log(res.data)
+            setUserId(res.data.searchUser.id)
         } catch (error) {
             console.log(error)
         }
