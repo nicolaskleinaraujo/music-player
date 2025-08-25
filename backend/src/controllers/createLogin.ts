@@ -12,7 +12,12 @@ const createLogin = async (req: Request, res: Response) => {
     try {
         const { user, password }: UserDTO = req.body
 
-        const searchUser = await prisma.user.findUnique({ where: { user } })
+        const searchUser = await prisma.user.findUnique({ 
+            where: { user },
+            include: { 
+                playlists: { include: { musics: true } } 
+            }
+        })
         if (!searchUser) {
             res.status(400).json({ msg: "Usuario ou senha incorretos" })
             return
