@@ -141,3 +141,6 @@ vite.config.ts.timestamp-*
 # Prisma
 /backend/src/generated/prisma
 /backend/prisma/dev.db
+
+# Audios
+/frontend/public/test-audios
