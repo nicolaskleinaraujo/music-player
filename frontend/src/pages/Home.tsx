@@ -6,7 +6,7 @@ import { UserContext } from "../context/UserContext"
 import createPlaylist from "../configs/createPlaylist"
 
 const Home = () => {
-    const { userId } = useContext(UserContext)
+    const { userId, playlists, setPlaylists } = useContext(UserContext)
 
     const handleCreatePlaylist = async() => {
         try {
@@ -18,7 +18,7 @@ const Home = () => {
 
             const res = await createPlaylist(playlistName, userId)
 
-            console.log(res)
+            setPlaylists(res.data.newPlaylist)
         } catch (error) {
             console.log(error)
         }
@@ -26,22 +26,26 @@ const Home = () => {
 
     return (
         <div className="flex flex-col justify-center items-center text-white gap-7 text-center pt-8">
-            <div>
-                <h2>Playlist Name 1</h2>
-                <ul>
-                    <li>Music 1</li>
-                    <li>Music 2</li>
-                </ul>
-            </div>
+            {playlists && playlists.map((playlist) => (
+                <div>
+                    <h2>{playlist.name}</h2>
 
-            <div>
-                <h2>Playlist Name 2</h2>
-                <ul>
-                    <li>Music 1</li>
-                    <li>Music 2</li>
-                    <li>Music 3</li>
-                </ul>
-            </div>
+                    <ul>
+                        {playlist.musics.map((music) => (
+                            <li>
+                                {music.title} - {music.channel}
+                            </li>
+                        ))}
+                    </ul>
+
+                    <button 
+                        className="border-2 border-white rounded-md p-1"
+                        onClick={() => console.log("Added")}
+                    >
+                        Adicionar Musica
+                    </button>
+                </div>
+            ))}
 
             <button 
                 className="border-2 border-white rounded-md p-2"

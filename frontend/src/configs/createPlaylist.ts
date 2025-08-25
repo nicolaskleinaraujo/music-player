@@ -8,7 +8,7 @@ const createPlaylist = async(playlistName: string, userId: number): Promise<Axio
         userId,
     })
 
-    return res.data
+    return res
 }
 
 export default createPlaylist

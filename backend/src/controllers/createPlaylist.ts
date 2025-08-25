@@ -26,7 +26,8 @@ const createPlaylist = async(req: Request, res: Response) => {
             data: {
                 name: name,
                 user: { connect: { id: userId } }
-            }
+            },
+            include: { musics: true }
         })
 
         res.status(201).json({ msg: "Playlist criada com sucesso", newPlaylist })
