@@ -4,3 +4,43 @@
     box-sizing: border-box;
     background-color: #242424;
 }
+
+/* Audio Player customizations */
+.rhap_container {
+    width: 95% !important;
+    margin: 1rem auto !important;
+    background: #242424 !important;
+    border: 1px solid #3a3a3a !important;
+    border-radius: 0.75rem !important;
+    padding: 0.75rem !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.rhap_button-clear {
+    color: #ffffff !important;
+    transition: color 0.2s ease;
+}
+
+.rhap_button-clear:hover {
+    color: #1db954 !important;
+}
+
+.rhap_progress-bar {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+.rhap_progress-indicator {
+    background: #ffffff !important;
+}
+
+.rhap_volume-bar {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+.rhap_volume-indicator {
+    background: #ffffff !important;
+}
+
+.rhap_time {
+    color: #ffffff !important;
+    font-size: 0.85rem;
+}
