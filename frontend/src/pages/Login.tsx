@@ -19,8 +19,11 @@ const Login = () => {
                 password,
             })
 
+            localStorage.setItem("userId", res.data.searchUser.id)
+
             setUserId(res.data.searchUser.id)
             setPlaylists(res.data.searchUser.playlists)
+
             navigate("/")
         } catch (error) {
             console.log(error)

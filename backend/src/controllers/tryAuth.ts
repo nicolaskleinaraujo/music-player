@@ -16,7 +16,7 @@ const TryAuth = async(req: Request, res: Response) => {
         }
 
         const searchUser = await prisma.user.findUnique({ 
-            where: { id: userId },
+            where: { id: Number(userId) },
             include: { playlists: { include: { musics: true } } }
         })
 

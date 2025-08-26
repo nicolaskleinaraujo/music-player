@@ -16,7 +16,7 @@ const createPlaylist = async(req: Request, res: Response) => {
             return
         }
 
-        const searchUser = await prisma.user.findUnique({ where: { id: userId } })
+        const searchUser = await prisma.user.findUnique({ where: { id: Number(userId) } })
         if (!searchUser) {
             res.status(404).json({ msg: "Usuario não encontrado" })
             return
@@ -25,7 +25,7 @@ const createPlaylist = async(req: Request, res: Response) => {
         const newPlaylist = await prisma.playlist.create({
             data: {
                 name: name,
-                user: { connect: { id: userId } }
+                user: { connect: { id: Number(userId) } }
             },
             include: { musics: true }
         })
