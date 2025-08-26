@@ -8,6 +8,7 @@ import createUser from "./controllers/createUser"
 import createLogin from "./controllers/createLogin"
 import createPlaylist from "./controllers/createPlaylist"
 import TryAuth from "./controllers/tryAuth"
+import addMusic from "./controllers/addMusic"
 
 const app: Application = express()
 const port: number = Number(process.env.PORT) || 3000
@@ -24,6 +25,7 @@ app.post("/user", (req: Request, res: Response) => createUser(req, res))
 app.post("/user/login", (req: Request, res: Response) => createLogin(req, res))
 app.post("/playlist", (req: Request, res: Response) => createPlaylist(req, res))
 app.post("/tryauth", (req: Request, res: Response) => TryAuth(req, res))
+app.post("/music", (req: Request, res: Response) => addMusic(req, res))
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)

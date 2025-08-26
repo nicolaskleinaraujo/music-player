@@ -27,7 +27,7 @@ const Home = () => {
     return (
         <div className="flex flex-col justify-center items-center text-white gap-7 text-center pt-8">
             {playlists && playlists.map((playlist) => (
-                <div>
+                <div key={playlist.id}>
                     <h2>{playlist.name}</h2>
 
                     <ul>
