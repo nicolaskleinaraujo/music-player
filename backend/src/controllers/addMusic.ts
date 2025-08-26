@@ -1,16 +1,17 @@
 // Modules
 import { Request, Response } from "express"
 import prisma from "../config/prisma"
-import { exec } from "child_process"
 import path from "path"
 import fs from "fs"
+import youtubeDl from "youtube-dl-exec"
+import getShortPath from "../config/getShortPath"
 
 interface MusicDTO {
     url: string,
     playlistId: number,
 }
 
-const addMusic = (req: Request, res:    Response) => {
+const addMusic = async(req: Request, res: Response) => {
     try {
         const { url, playlistId }: MusicDTO = req.body
 
@@ -19,38 +20,33 @@ const addMusic = (req: Request, res:    Response) => {
             return
         }
 
-        const musicDir = path.join(__dirname, "../../musics")
-        if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir)
+        const musicDir = path.resolve(__dirname, "../../musics")
+        if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir, { recursive: true })
 
-        const musicName = `music_${Date.now()}.mp3`
+        const musicName = `music_${Date.now()}`.replace(/[^\w\d_-]/g, "_") + ".mp3"
         const musicPath = path.join(musicDir, musicName)
 
-        const ytDlpCommand = `yt-dlp -x --audio-format mp3 -o "${musicPath}" "${url}"`
-
-        exec(ytDlpCommand, async(error, stdout) => {
-            if (error) {
-                console.log(error)
-                res.status(500).json({ msg: "Erro ao baixar musica" })
-                return
-            }
-
-            const titleMatch = stdout.match(/Destination: (.+\.mp3)/)
-            const title = titleMatch ? path.basename(titleMatch[1], ".mp3") : "Unknown"
-
-            const music = await prisma.music.create({
-                data: {
-                    title,
-                    channel: "teste",
-                    url,
-                    filePath: musicName,
-                    Playlist: { connect: { id: Number(playlistId) } }
-                }
-            })
-
-            res.status(201).json({ msg: "Musica criada com sucesso", music })
+        await youtubeDl(url, {
+            extractAudio: true,
+            audioFormat: "mp3",
+            output: getShortPath(musicPath),
+            noCheckCertificates: true,
+            //quiet: true,
         })
+
+        const music = await prisma.music.create({
+            data: {
+                title: path.basename(musicPath, ".mp3"),
+                channel: "Youtube",
+                url,
+                filePath: musicName,
+                Playlist: { connect: { id: playlistId } }
+            }
+        })
+
+        res.status(201).json({ msg: "Musica adicionada com sucesso", music })
     } catch (error) {
-        res.status(500).json({ msg: "Erro interno, tente novamente" })
+        res.status(500).json({ msg: "Erro interno, tente novamente", error })
     }
 }
 
