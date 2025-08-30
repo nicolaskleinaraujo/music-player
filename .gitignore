@@ -145,3 +145,4 @@ vite.config.ts.timestamp-*
 # Audios
 /frontend/public/test-audios
 /backend/musics
+/backend/bin

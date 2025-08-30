@@ -3,13 +3,15 @@ import { Request, Response } from "express"
 import prisma from "../config/prisma"
 import path from "path"
 import fs from "fs"
-import youtubeDl from "youtube-dl-exec"
-import getShortPath from "../config/getShortPath"
+import YTDlpWrap from "yt-dlp-wrap"
 
 interface MusicDTO {
     url: string,
     playlistId: number,
 }
+
+const ytDlpPath = path.resolve(__dirname, String(process.env.YT_DLP_URL))
+const ytDlp = new YTDlpWrap(ytDlpPath)
 
 const addMusic = async(req: Request, res: Response) => {
     try {
@@ -23,21 +25,23 @@ const addMusic = async(req: Request, res: Response) => {
         const musicDir = path.resolve(__dirname, "../../musics")
         if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir, { recursive: true })
 
-        const musicName = `music_${Date.now()}`.replace(/[^\w\d_-]/g, "_") + ".mp3"
+        const musicName = `music_${Date.now()}.mp3`
         const musicPath = path.join(musicDir, musicName)
 
-        await youtubeDl(url, {
-            extractAudio: true,
-            audioFormat: "mp3",
-            output: getShortPath(musicPath),
-            noCheckCertificates: true,
-            //quiet: true,
-        })
+        await ytDlp.execPromise([
+            url,
+            "-x",
+            "--audio-format", "mp3",
+            "-o", musicPath
+        ])
+
+        const musicInfo = await ytDlp.execPromise([url, "-j"])
+        const parsedMusicInfo = JSON.parse(musicInfo)
 
         const music = await prisma.music.create({
             data: {
-                title: path.basename(musicPath, ".mp3"),
-                channel: "Youtube",
+                title: parsedMusicInfo.title,
+                channel: parsedMusicInfo.uploader,
                 url,
                 filePath: musicName,
                 Playlist: { connect: { id: playlistId } }
