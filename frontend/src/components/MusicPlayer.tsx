@@ -4,14 +4,23 @@ import AudioPlayer from "react-h5-audio-player"
 import dbFetch from "../utils/axios"
 import { useEffect, useState } from "react"
 
+type Music = {
+    id: number,
+    title: string,
+    channel: string,
+    url: string,
+    filePath: string,
+    playlistId: number,
+}
+
 interface MusicPlayerProps {
-    playlist: any[]
+    musics: Music[]
     currentIndex: number
     setCurrentIndex: (index: number) => void
 }
 
-const MusicPlayer = ({ playlist, currentIndex, setCurrentIndex }: MusicPlayerProps) => {
-    const currentMusic = playlist[currentIndex]
+const MusicPlayer = ({ musics, currentIndex, setCurrentIndex }: MusicPlayerProps) => {
+    const currentMusic = musics[currentIndex]
     const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined)
 
     useEffect(() => {

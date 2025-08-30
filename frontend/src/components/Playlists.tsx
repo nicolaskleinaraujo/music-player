@@ -1,6 +1,7 @@
 // Modules
 import type { Dispatch, SetStateAction } from "react"
 import addMusic from "../configs/addMusic"
+import { PlayIcon } from "@radix-ui/react-icons"
 
 type Music = {
     id: number,
@@ -40,17 +41,17 @@ const Playlists = ({ playlists, setCurrentPlaylist, setCurrentIndex }: Playlists
     }
 
     return (
-        <div>
+        <div className="flex flex-col justify-center items-center text-white gap-7 text-center">
             {playlists && playlists.map((playlist) => (
                 <div key={playlist.id}>
-                    <h2>{playlist.name}</h2>
-
-                    <button
-                        className="border-2 border-green-500 rounded-md p-1 m-2"
-                        onClick={() => handlePlay(playlist.musics, 0)}
-                    >
-                        ▶️ Tocar Playlist
-                    </button>
+                    <div className="flex justify-center items-center">
+                        <h2>{playlist.name}</h2>
+                        <button onClick={() => handlePlay(playlist.musics, 0)}>
+                            <PlayIcon 
+                                className="text-black bg-[#1db954]"
+                            />
+                        </button>
+                    </div>
 
                     <ul>
                         {playlist.musics.map((music, index) => (

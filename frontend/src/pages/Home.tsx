@@ -13,7 +13,6 @@ const Home = () => {
 
     const handleCreatePlaylist = async() => {
         try {
-            console.log(playlists)
             const res = await createPlaylist(userId)
             if (res) setPlaylists([...playlists, res.data.newPlaylist])
         } catch (error) {
@@ -37,7 +36,7 @@ const Home = () => {
             </button>
 
             <MusicPlayer 
-                playlist={currentPlaylist}
+                musics={currentPlaylist}
                 currentIndex={currentIndex}
                 setCurrentIndex={setCurrentIndex}
             />
