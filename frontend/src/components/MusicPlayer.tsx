@@ -4,20 +4,27 @@ import AudioPlayer from "react-h5-audio-player"
 import dbFetch from "../utils/axios"
 import { useEffect, useState } from "react"
 
-const MusicPlayer = ({ filename }: { filename: string }) => {
-    const [audioSrc, setAudioSrc] = useState<string | undefined>(undefined)
+interface MusicPlayerProps {
+    playlist: any[]
+    currentIndex: number
+    setCurrentIndex: (index: number) => void
+}
+
+const MusicPlayer = ({ playlist, currentIndex, setCurrentIndex }: MusicPlayerProps) => {
+    const currentMusic = playlist[currentIndex]
+    const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined)
 
     useEffect(() => {
-        if (!filename) return
+        if (!currentMusic) return
 
         const fetchMusic = async() => {
             try {
-                const response = await dbFetch.get(`/music?fileName=${filename}`, {
+                const response = await dbFetch.get(`/music?fileName=${currentMusic.filePath}`, {
                     responseType: "blob",
                 })
 
                 const url = URL.createObjectURL(response.data)
-                setAudioSrc(url)
+                setAudioUrl(url)
             } catch (error) {
                 console.log(error)
             }
@@ -26,15 +33,22 @@ const MusicPlayer = ({ filename }: { filename: string }) => {
         fetchMusic()
 
         return () => {
-            if (audioSrc) URL.revokeObjectURL(audioSrc)
+            if (audioUrl) URL.revokeObjectURL(audioUrl)
         }
-    }, [filename])
+    }, [currentMusic])
 
     return (
-        <AudioPlayer
-            src={audioSrc}
-            autoPlay={true}
-        />
+        <div className="fixed bottom-0 left-0 right-0 z-50">
+            <AudioPlayer
+                src={audioUrl}
+                autoPlay
+                showJumpControls={false}
+                showSkipControls={true}
+                onClickNext={() => setCurrentIndex(currentIndex + 1)}
+                onClickPrevious={() => setCurrentIndex(currentIndex - 1)}
+                onEnded={() => setCurrentIndex(currentIndex + 1)}
+            />
+        </div>
     )
 }
 
