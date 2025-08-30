@@ -4,14 +4,25 @@ import AudioPlayer from "react-h5-audio-player"
 import { useContext } from "react"
 import { UserContext } from "../context/UserContext"
 import createPlaylist from "../configs/createPlaylist"
+import addMusic from "../configs/addMusic"
 
 const Home = () => {
     const { userId, playlists, setPlaylists } = useContext(UserContext)
 
     const handleCreatePlaylist = async() => {
         try {
+            console.log(playlists)
             const res = await createPlaylist(userId)
-            if (res) setPlaylists(res.data.newPlaylist)
+            if (res) setPlaylists([...playlists, res.data.newPlaylist])
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleAddMusic = async(playlistId: number) => {
+        try {
+            const res = await addMusic(playlistId)
+            if (res) location.reload()
         } catch (error) {
             console.log(error)
         }
@@ -25,7 +36,7 @@ const Home = () => {
 
                     <ul>
                         {playlist.musics.map((music) => (
-                            <li>
+                            <li key={music.id}>
                                 {music.title} - {music.channel}
                             </li>
                         ))}
@@ -33,7 +44,7 @@ const Home = () => {
 
                     <button 
                         className="border-2 border-white rounded-md p-1"
-                        onClick={() => console.log("Added")}
+                        onClick={() => handleAddMusic(playlist.id)}
                     >
                         Adicionar Musica
                     </button>
