@@ -1,13 +1,14 @@
 // Modules
-import "react-h5-audio-player/lib/styles.css"
-import AudioPlayer from "react-h5-audio-player"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { UserContext } from "../context/UserContext"
 import createPlaylist from "../configs/createPlaylist"
 import addMusic from "../configs/addMusic"
+import MusicPlayer from "../components/MusicPlayer"
 
 const Home = () => {
     const { userId, playlists, setPlaylists } = useContext(UserContext)
+
+    const [currentMusic, setCurrentMusic] = useState("")
 
     const handleCreatePlaylist = async() => {
         try {
@@ -36,7 +37,7 @@ const Home = () => {
 
                     <ul>
                         {playlist.musics.map((music) => (
-                            <li key={music.id}>
+                            <li key={music.id} onClick={() => setCurrentMusic(music.filePath)}>
                                 {music.title} - {music.channel}
                             </li>
                         ))}
@@ -58,10 +59,7 @@ const Home = () => {
                 Nova Playlist
             </button>
 
-            <AudioPlayer
-                src="/test-audios/music_1.mp3"
-                onPlay={() => console.log("Playing...")}
-            />
+            <MusicPlayer filename={currentMusic} />
         </div>
     )
 }
