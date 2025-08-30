@@ -10,15 +10,8 @@ const Home = () => {
 
     const handleCreatePlaylist = async() => {
         try {
-            const playlistName = prompt("Digite o nome da Playlist")
-
-            if (!playlistName) {
-                return
-            }
-
-            const res = await createPlaylist(playlistName, userId)
-
-            setPlaylists(res.data.newPlaylist)
+            const res = await createPlaylist(userId)
+            if (res) setPlaylists(res.data.newPlaylist)
         } catch (error) {
             console.log(error)
         }
