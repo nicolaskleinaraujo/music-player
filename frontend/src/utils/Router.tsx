@@ -1,5 +1,6 @@
 // Modules
 import { BrowserRouter, Routes, Route } from "react-router-dom"
+import UserRoute from "./UserRoute"
 
 // Pages
 import Login from "../pages/Login"
@@ -10,8 +11,11 @@ const Router = () => {
         <>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={ <Login /> } />
+                    
+                    <Route element={ <UserRoute /> }>
+                        <Route path="/" element={ <Home /> } />
+                    </Route>
                 </Routes>
             </BrowserRouter>
         </>
