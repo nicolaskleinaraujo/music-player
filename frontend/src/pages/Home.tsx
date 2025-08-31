@@ -24,7 +24,9 @@ const Home = () => {
         <div className="flex flex-col justify-center items-center text-white gap-7 text-center pt-8">
             <Playlists 
                 playlists={playlists}
+                currentPlaylist={currentPlaylist}
                 setCurrentPlaylist={setCurrentPlaylist}
+                currentIndex={currentIndex}
                 setCurrentIndex={setCurrentIndex}
             />
 
