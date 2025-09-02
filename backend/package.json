@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./dist/app.js",
-    "build": "tsc",
+    "build": "tsc && cp -r bin dist/",
     "dev": "ts-node-dev --respawn --transpile-only --cls ./src/app.ts"
   },
   "keywords": [],

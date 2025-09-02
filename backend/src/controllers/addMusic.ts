@@ -28,9 +28,12 @@ const addMusic = async(req: Request, res: Response) => {
         const musicName = `music_${Date.now()}.mp3`
         const musicPath = path.join(musicDir, musicName)
 
+        const cookiesTxtPath = path.resolve(__dirname, String(process.env.COOKIES_TXT_URL))
+
         await ytDlp.execPromise([
             url,
             "-x",
+            "--cookies", cookiesTxtPath,
             "--audio-format", "mp3",
             "-o", musicPath
         ])
