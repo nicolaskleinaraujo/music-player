@@ -8,10 +8,12 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  user      String     @unique
-  password  String
-  playlists Playlist[]
+  id           Int        @id @default(autoincrement())
+  user         String     @unique
+  password     String
+  email        String?
+  refreshToken String?
+  playlists    Playlist[]
 }
 
 model Playlist {
