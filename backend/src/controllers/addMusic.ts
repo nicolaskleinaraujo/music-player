@@ -4,10 +4,12 @@ import prisma from "../config/prisma"
 import path from "path"
 import fs from "fs"
 import YTDlpWrap from "yt-dlp-wrap"
+import generateCookies from "../config/generateCookies"
 
 interface MusicDTO {
     url: string,
     playlistId: number,
+    userId: number,
 }
 
 const ytDlpPath = path.resolve(__dirname, String(process.env.YT_DLP_URL))
@@ -15,9 +17,9 @@ const ytDlp = new YTDlpWrap(ytDlpPath)
 
 const addMusic = async(req: Request, res: Response) => {
     try {
-        const { url, playlistId }: MusicDTO = req.body
+        const { url, playlistId, userId }: MusicDTO = req.body
 
-        if (!url || !playlistId) {
+        if (!url || !playlistId || !userId) {
             res.status(400).json({ msg: "Informações insuficientes" })
             return
         }
@@ -28,7 +30,11 @@ const addMusic = async(req: Request, res: Response) => {
         const musicName = `music_${Date.now()}.mp3`
         const musicPath = path.join(musicDir, musicName)
 
-        const cookiesTxtPath = path.resolve(__dirname, String(process.env.COOKIES_TXT_URL))
+        const cookiesTxtPath = await generateCookies(userId)
+        if (!cookiesTxtPath) {
+            res.status(400).json({ msg: "Erro ao gerar cookies" })
+            return
+        }
 
         await ytDlp.execPromise([
             url,

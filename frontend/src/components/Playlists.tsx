@@ -20,6 +20,7 @@ type Playlist = {
 }
 
 interface PlaylistsProps {
+    userId: number,
     playlists: Playlist[],
     currentPlaylist: any[]
     setCurrentPlaylist: Dispatch<SetStateAction<any[]>>
@@ -27,10 +28,10 @@ interface PlaylistsProps {
     setCurrentIndex: Dispatch<SetStateAction<number>>
 }
 
-const Playlists = ({ playlists, currentPlaylist, setCurrentPlaylist, currentIndex, setCurrentIndex }: PlaylistsProps) => {
-    const handleAddMusic = async(playlistId: number) => {
+const Playlists = ({ userId, playlists, currentPlaylist, setCurrentPlaylist, currentIndex, setCurrentIndex }: PlaylistsProps) => {
+    const handleAddMusic = async(playlistId: number, userId: number) => {
         try {
-            const res = await addMusic(playlistId)
+            const res = await addMusic(playlistId, userId)
             if (res) location.reload()
         } catch (error) {
             console.log(error)
@@ -95,7 +96,7 @@ const Playlists = ({ playlists, currentPlaylist, setCurrentPlaylist, currentInde
 
                     <button
                         className="mt-3 border-2 border-white rounded-md px-3 py-1 hover:bg-white/10 transition"
-                        onClick={() => handleAddMusic(playlist.id)}
+                        onClick={() => handleAddMusic(playlist.id, userId)}
                         >
                         Adicionar Música
                     </button>
