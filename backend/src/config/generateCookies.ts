@@ -18,7 +18,7 @@ const generateCookies = async(userId: number) => {
         }
 
         oauth2Client.setCredentials({
-            refresh_token: user?.refreshToken,
+            refresh_token: user.refreshToken,
         })
 
         const { token: accessToken } = await oauth2Client.getAccessToken()
@@ -27,8 +27,14 @@ const generateCookies = async(userId: number) => {
             return
         }
 
-        const cookiesTxtPath = path.resolve(__dirname, `${String(process.env.COOKIES_PATH)}/${userId}.txt`)
-        const cookieString = `# Netscape HTTP Cookie File.youtube.com\tTRUE\t/\tTRUE\t9999999999\tSAPISID\t${accessToken}`
+        const cookiesDir = path.resolve(__dirname, String(process.env.COOKIES_PATH))
+        if (!fs.existsSync(cookiesDir)) {
+            fs.mkdirSync(cookiesDir, { recursive: true });
+        }
+
+        const cookiesTxtPath = path.join(cookiesDir, `${userId}.txt`)
+        const cookieString = `# Netscape HTTP Cookie File
+.youtube.com\tTRUE\t/\tTRUE\t9999999999\tSAPISID\t${accessToken}`
 
         fs.writeFileSync(cookiesTxtPath, cookieString)
 
