@@ -36,16 +36,16 @@ const addMusic = async(req: Request, res: Response) => {
             return
         }
 
-        await ytDlp.execPromise([
+        const infoJson = await ytDlp.execPromise([
             url,
             "-x",
             "--cookies", cookiesTxtPath,
             "--audio-format", "mp3",
-            "-o", musicPath
+            "-o", musicPath,
+            "-j"
         ])
 
-        const musicInfo = await ytDlp.execPromise([url, "-j"])
-        const parsedMusicInfo = JSON.parse(musicInfo)
+        const parsedMusicInfo = JSON.parse(infoJson)
 
         const music = await prisma.music.create({
             data: {
