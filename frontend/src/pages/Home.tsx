@@ -4,6 +4,7 @@ import { UserContext } from "../context/UserContext"
 import createPlaylist from "../configs/createPlaylist"
 import MusicPlayer from "../components/MusicPlayer"
 import Playlists from "../components/Playlists"
+import GoogleAuth from "../components/GoogleAuth"
 
 const Home = () => {
     const { userId, playlists, setPlaylists } = useContext(UserContext)
@@ -42,6 +43,8 @@ const Home = () => {
                 currentIndex={currentIndex}
                 setCurrentIndex={setCurrentIndex}
             />
+
+            <GoogleAuth />
         </div>
     )
 }

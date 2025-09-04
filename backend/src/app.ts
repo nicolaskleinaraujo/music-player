@@ -10,6 +10,8 @@ import createPlaylist from "./controllers/createPlaylist"
 import TryAuth from "./controllers/tryAuth"
 import addMusic from "./controllers/addMusic"
 import streamMusic from "./controllers/streamMusic"
+import googleAuth from "./controllers/googleAuth"
+import googleToken from "./controllers/googleToken"
 
 const app: Application = express()
 const port: number = Number(process.env.PORT) || 3000
@@ -28,6 +30,8 @@ app.post("/playlist", (req: Request, res: Response) => createPlaylist(req, res))
 app.post("/tryauth", (req: Request, res: Response) => TryAuth(req, res))
 app.post("/music", (req: Request, res: Response) => addMusic(req, res))
 app.get("/music", (req: Request, res: Response) => streamMusic(req, res))
+app.post("/googleauth", (req: Request, res: Response) => googleAuth(req, res))
+app.post("/googletoken", (req: Request, res: Response) => googleToken(req, res))
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
