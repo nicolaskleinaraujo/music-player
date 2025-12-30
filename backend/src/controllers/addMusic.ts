@@ -21,13 +21,39 @@ const addMusic = async(req: Request, res: Response) => {
             return
         }
 
+        // Checks if the music is already downloaded
+        const checksMusic = await prisma.music.findFirst({ where: { url } })
+        if (checksMusic) {
+            const music = await prisma.music.create({
+                data: {
+                    title: checksMusic.title,
+                    channel: checksMusic.channel,
+                    url,
+                    filePath: checksMusic.filePath,
+                    Playlist: { connect: { id: playlistId } }
+                }
+            })
+
+            res.status(201).json({ msg: "Musica adicionada com sucesso", music })
+            return
+        }
+
+        const musicDir = path.resolve(__dirname, "../../musics")
+        if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir, { recursive: true })
+
+        const musicInfos = await axios.get(`https://www.youtube.com/oembed?url=${url}&format=json`)
+
+        const musicFile = path.join(musicDir, `${musicInfos.data.title}.mp3`)
+
+        // Generetes the auth token
         const authGen = await axios.get(String(process.env.AUTH_GEN_URL), {
             headers: {
-                "Origin": "https://frame.y2meta-uk.com",
+                "Origin": String(process.env.MUSIC_ORIGIN_URL),
                 "User-Agent": "PostmanRuntime/7.49.1"
             },
         })
 
+        // Generates the music download URL
         const urlGen = await axios.post(String(process.env.URL_GEN), {
             "link": url,
             "format": "mp3",
@@ -38,7 +64,7 @@ const addMusic = async(req: Request, res: Response) => {
         }, {
             headers: {
                 "Key": authGen.data.key,
-                "Origin": "https://frame.y2meta-uk.com",
+                "Origin": String(process.env.MUSIC_ORIGIN_URL),
                 "User-Agent": "PostmanRuntime/7.49.1",
                 "Accept-Encoding": "gzip, deflate, br",
                 "Accept": "*/*",
@@ -47,11 +73,7 @@ const addMusic = async(req: Request, res: Response) => {
             }
         })
 
-        const musicDir = path.resolve(__dirname, "../../musics")
-        if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir, { recursive: true })
-
-        const musicFile = path.join(musicDir, "musicTest.mp3")
-
+        // Fetches the music download URL and saves it to internal storage 
         https.get(urlGen.data.url, (response) => {
             if (response.statusCode !== 200) {
                 res.status(500).json({ msg: "Erro interno, tente novamente" })
@@ -66,8 +88,8 @@ const addMusic = async(req: Request, res: Response) => {
 
         const music = await prisma.music.create({
             data: {
-                title: urlGen.data.filename,
-                channel: "placeholder",
+                title: musicInfos.data.title,
+                channel: musicInfos.data.author_name,
                 url,
                 filePath: musicFile,
                 Playlist: { connect: { id: playlistId } }
