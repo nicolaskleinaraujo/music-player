@@ -28,7 +28,7 @@ const MusicPlayer = ({ musics, currentIndex, setCurrentIndex }: MusicPlayerProps
 
         const fetchMusic = async() => {
             try {
-                const response = await dbFetch.get(`/music?fileName=${currentMusic.filePath}`, {
+                const response = await dbFetch.get(`/music?fileName=${encodeURIComponent(currentMusic.filePath)}`, {
                     responseType: "blob",
                 })
 

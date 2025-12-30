@@ -27,8 +27,7 @@ const addMusic = async(req: Request, res: Response) => {
         const musicDir = path.resolve(__dirname, "../../musics")
         if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir, { recursive: true })
 
-        const musicName = `music_${Date.now()}.mp3`
-        const musicPath = path.join(musicDir, musicName)
+        const musicPath = path.join(musicDir, "%(title)s_%(id)s.%(ext)s")
 
         const cookiesTxtPath = await generateCookies(userId)
         if (!cookiesTxtPath) {
@@ -42,17 +41,17 @@ const addMusic = async(req: Request, res: Response) => {
             "--cookies", cookiesTxtPath,
             "--audio-format", "mp3",
             "-o", musicPath,
-            "-j"
+            "--print-json"
         ])
 
-        const parsedMusicInfo = JSON.parse(infoJson)
+        const parsedMusicInfo = await JSON.parse(infoJson)
 
         const music = await prisma.music.create({
             data: {
                 title: parsedMusicInfo.title,
                 channel: parsedMusicInfo.uploader,
                 url,
-                filePath: musicName,
+                filePath: `${parsedMusicInfo.title}_${parsedMusicInfo.id}.mp3`,
                 Playlist: { connect: { id: playlistId } }
             }
         })
