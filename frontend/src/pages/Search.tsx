@@ -45,13 +45,13 @@ const Search = () => {
                 return
             }
 
-            const authGen = await axios.get("https://cnv.cx/v2/sanity/key", {
+            /*const authGen = await axios.get("https://cnv.cx/v2/sanity/key", {
                 headers: {
                     "Origin": "https://frame.y2meta-uk.com",
                     "User-Agent": "PostmanRuntime/7.49.1",
                     "Accept": "application/json",
                 }
-            })
+            })*/
 
             const urlGen = await axios.post("https://cnv.cx/v2/converter", {
                 "link": `https://www.youtube.com/watch?v=${selectedUrl}`,
