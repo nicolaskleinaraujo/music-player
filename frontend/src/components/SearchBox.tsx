@@ -34,7 +34,7 @@ const SearchBox = () => {
                     <ul>
                         {suggestedMusics.map((suggestedMusic) => (
                             <li>
-                                <Link to={`/search?${suggestedMusic[0]}`}>
+                                <Link to={`/search?q=${suggestedMusic[0]}`}>
                                     {suggestedMusic[0]}
                                 </Link>
                             </li>

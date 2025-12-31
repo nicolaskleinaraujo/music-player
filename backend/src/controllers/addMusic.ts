@@ -38,12 +38,24 @@ const addMusic = async(req: Request, res: Response) => {
             return
         }
 
+        // Gets music infos and creates music instance on database
+        const musicInfos = await axios.get(`https://www.youtube.com/oembed?url=${url}&format=json`)
+
+        let music = await prisma.music.create({
+            data: {
+                title: musicInfos.data.title,
+                channel: musicInfos.data.author_name,
+                url,
+                // FIXME remove this filepath placeholder
+                filePath: "",
+                Playlist: { connect: { id: playlistId } }
+            }
+        })
+
         const musicDir = path.resolve(__dirname, "../../musics")
         if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir, { recursive: true })
 
-        const musicInfos = await axios.get(`https://www.youtube.com/oembed?url=${url}&format=json`)
-
-        const musicFile = path.join(musicDir, `${musicInfos.data.title}.mp3`)
+        const musicFile = path.join(musicDir, `${music.id}.mp3`)
 
         // Generetes the auth token
         const authGen = await axios.get(String(process.env.AUTH_GEN_URL), {
@@ -86,14 +98,9 @@ const addMusic = async(req: Request, res: Response) => {
             fileStream.on("finish", () => fileStream.close())
         })
 
-        const music = await prisma.music.create({
-            data: {
-                title: musicInfos.data.title,
-                channel: musicInfos.data.author_name,
-                url,
-                filePath: musicFile,
-                Playlist: { connect: { id: playlistId } }
-            }
+        music = await prisma.music.update({
+            where: { id: music.id },
+            data: { filePath: musicFile }
         })
 
         res.status(201).json({ msg: "Musica adicionada com sucesso", music })

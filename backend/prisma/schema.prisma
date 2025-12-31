@@ -28,7 +28,7 @@ model Music {
   title    String
   channel  String
   url      String
-  filePath String
+  filePath String?
 
   Playlist   Playlist @relation(fields: [playlistId], references: [id])
   playlistId Int
