@@ -5,6 +5,7 @@ import createPlaylist from "../configs/createPlaylist"
 import MusicPlayer from "../components/MusicPlayer"
 import Playlists from "../components/Playlists"
 import GoogleAuth from "../components/GoogleAuth"
+import SearchBox from "../components/SearchBox"
 
 const Home = () => {
     const { userId, playlists, setPlaylists } = useContext(UserContext)
@@ -23,6 +24,8 @@ const Home = () => {
 
     return (
         <div className="flex flex-col justify-center items-center text-white gap-7 text-center pt-8">
+            <SearchBox />
+
             <Playlists 
                 userId={userId}
                 playlists={playlists}
