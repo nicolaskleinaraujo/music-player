@@ -5,13 +5,22 @@ import { useSearchParams } from "react-router-dom"
 import { UserContext } from "../context/UserContext"
 import PlaylistPrompt from "../components/PlaylistPrompt"
 
+type Music = {
+    id: number,
+    title: string,
+    channel: string,
+    url: string,
+    filePath: string,
+    playlistId: number,
+}
+
 const Search = () => {
     const { userId, playlists } = useContext(UserContext)
 
     const [searchParams] = useSearchParams()
     const query = searchParams.get("q")
 
-    const [musics, setMusics] = useState([])
+    const [musics, setMusics] = useState<Music[]>([])
     const [showPrompt, setShowPrompt] = useState(false)
     const [selectedUrl, setSelectedUrl] = useState("")
 
@@ -60,7 +69,7 @@ const Search = () => {
                 <ul>
                     {musics.map((music) => (
                         <li>
-                            {music.title} - <button onClick={() => { setSelectedUrl(music.id), setShowPrompt(true) }}>ADICIONAR</button>
+                            {music.title} - <button onClick={() => { setSelectedUrl(String(music.id)), setShowPrompt(true) }}>ADICIONAR</button>
                         </li>
                     ))}
                 </ul>
