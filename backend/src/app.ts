@@ -12,6 +12,7 @@ import addMusic from "./controllers/addMusic"
 import streamMusic from "./controllers/streamMusic"
 import googleToken from "./controllers/googleToken"
 import suggestMusic from "./controllers/suggestMusic"
+import searchMusic from "./controllers/searchMusic"
 
 const app: Application = express()
 const port: number = Number(process.env.PORT) || 3000
@@ -32,6 +33,7 @@ app.post("/music", (req: Request, res: Response) => addMusic(req, res))
 app.get("/music", (req: Request, res: Response) => streamMusic(req, res))
 app.post("/googletoken", (req: Request, res: Response) => googleToken(req, res))
 app.get("/suggestmusic", (req: Request, res: Response) => suggestMusic(req, res))
+app.get("/searchmusic", (req: Request, res: Response) => searchMusic(req, res))
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
