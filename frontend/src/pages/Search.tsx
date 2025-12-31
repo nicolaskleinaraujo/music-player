@@ -48,7 +48,8 @@ const Search = () => {
             const authGen = await axios.get("https://cnv.cx/v2/sanity/key", {
                 headers: {
                     "Origin": "https://frame.y2meta-uk.com",
-                    "User-Agent": "PostmanRuntime/7.49.1"
+                    "User-Agent": "PostmanRuntime/7.49.1",
+                    "Accept": "application/json",
                 }
             })
 
