@@ -62,7 +62,7 @@ const Search = () => {
                 "vCodec": "h264"
             }, {
                 headers: {
-                    "Key": authGen.data.key,
+                    "Key": "authGen.data.key",
                     "Origin": "https://frame.y2meta-uk.com",
                     "User-Agent": "PostmanRuntime/7.49.1",
                     "Accept-Encoding": "gzip, deflate, br",
