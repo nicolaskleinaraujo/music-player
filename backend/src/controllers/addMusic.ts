@@ -66,8 +66,10 @@ const addMusic = async(req: Request, res: Response) => {
                 "Origin": String(process.env.MUSIC_ORIGIN_URL),
                 "User-Agent": "PostmanRuntime/7.49.1"
             },
-            httpsAgent: { agent }
+            httpsAgent: agent,
+            proxy: false,
         })
+
         const urlGen = await axios.post(String(process.env.URL_GEN), {
             "link": url,
             "format": "mp3",
@@ -85,7 +87,8 @@ const addMusic = async(req: Request, res: Response) => {
                 "Content-Type": "application/json",
                 "Connection": "keep-alive"
             },
-            httpsAgent: { agent }
+            httpsAgent: agent,
+            proxy: false,
         })
 
         // Fetches the music download URL and saves it to internal storage 
