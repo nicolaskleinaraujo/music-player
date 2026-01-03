@@ -5,17 +5,17 @@ import path from "node:path"
 import fs from "node:fs"
 import https from "node:https"
 import axios from "axios"
+import { SocksProxyAgent } from "socks-proxy-agent"
 
 interface MusicDTO {
     url: string,
     playlistId: number,
     userId: number,
-    generatedUrl: string,
 }
 
 const addMusic = async(req: Request, res: Response) => {
     try {
-        const { url, playlistId, userId, generatedUrl }: MusicDTO = req.body
+        const { url, playlistId, userId }: MusicDTO = req.body
 
         if (!url || !playlistId || !userId) {
             res.status(400).json({ msg: "Informações insuficientes" })
@@ -59,12 +59,14 @@ const addMusic = async(req: Request, res: Response) => {
         const musicFile = path.join(musicDir, `${music.id}.mp3`)
 
         // Generetes the auth token
-        /*
+        const agent = new SocksProxyAgent(String(process.env.PROXY_URL))
+
         const authGen = await axios.get(String(process.env.AUTH_GEN_URL), {
             headers: {
                 "Origin": String(process.env.MUSIC_ORIGIN_URL),
                 "User-Agent": "PostmanRuntime/7.49.1"
             },
+            httpsAgent: { agent }
         })
         const urlGen = await axios.post(String(process.env.URL_GEN), {
             "link": url,
@@ -82,12 +84,12 @@ const addMusic = async(req: Request, res: Response) => {
                 "Accept": "",
                 "Content-Type": "application/json",
                 "Connection": "keep-alive"
-            }
+            },
+            httpsAgent: { agent }
         })
-        */
 
         // Fetches the music download URL and saves it to internal storage 
-        https.get(generatedUrl, (response) => {
+        https.get(urlGen.data.url, (response) => {
             if (response.statusCode !== 200) {
                 res.status(500).json({ msg: "Erro interno, tente novamente" })
                 return

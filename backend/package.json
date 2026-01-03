@@ -30,6 +30,7 @@
     "google-auth-library": "^10.3.0",
     "googleapis": "^159.0.0",
     "jsonwebtoken": "^9.0.2",
+    "socks-proxy-agent": "^8.0.5",
     "yt-dlp-wrap": "^2.3.12"
   }
 }

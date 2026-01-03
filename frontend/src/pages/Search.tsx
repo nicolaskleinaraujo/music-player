@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { UserContext } from "../context/UserContext"
 import PlaylistPrompt from "../components/PlaylistPrompt"
-import axios from "axios"
 
 type Music = {
     id: number,
@@ -45,40 +44,10 @@ const Search = () => {
                 return
             }
 
-            /*const authGen = await axios.get("https://cnv.cx/v2/sanity/key", {
-                headers: {
-                    "Origin": "https://frame.y2meta-uk.com",
-                    "User-Agent": "PostmanRuntime/7.49.1",
-                    "Accept": "application/json",
-                }
-            })*/
-
-            const urlGen = await axios.post("https://cnv.cx/v2/converter", {
-                "link": `https://www.youtube.com/watch?v=${selectedUrl}`,
-                "format": "mp3",
-                "audioBitrate": "320",
-                "videoQuality": "720",
-                "filenameStyle": "pretty",
-                "vCodec": "h264"
-            }, {
-                headers: {
-                    "Key": "authGen.data.key",
-                    "Origin": "https://frame.y2meta-uk.com",
-                    "User-Agent": "PostmanRuntime/7.49.1",
-                    "Accept-Encoding": "gzip, deflate, br",
-                    "Accept": "*/*",
-                    "Content-Type": "application/json",
-                    "Connection": "keep-alive"
-                }
-            })
-
-            console.log(urlGen.data)
-
             const res = await dbFetch.post("music", {
                 url: `https://www.youtube.com/watch?v=${selectedUrl}`,
                 playlistId,
                 userId,
-                generatedUrl: urlGen.data.url,
             })
 
             console.log(res.data)
