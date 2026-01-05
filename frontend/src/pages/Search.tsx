@@ -3,6 +3,7 @@ import dbFetch from "../utils/axios"
 import { useContext, useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { UserContext } from "../context/UserContext"
+import { FaPlus } from "react-icons/fa"
 import PlaylistPrompt from "../components/PlaylistPrompt"
 
 type Music = {
@@ -62,13 +63,43 @@ const Search = () => {
     }, [])
 
     return (
-        <div>
-            {/* FIXME fix this crap UI */}
+        <div className="text-white w-full max-w-3xl mx-auto px-4 my-10">
+            <h1 className="text-xl font-bold mb-6 text-center">
+                Resultados para{" "}
+                <span className="text-[#1db954]">{query}</span>
+            </h1>
+
             {musics && (
-                <ul>
-                    {musics.map((music) => (
-                        <li>
-                            {music.title} - <button onClick={() => { setSelectedUrl(String(music.id)), setShowPrompt(true) }}>ADICIONAR</button>
+                <ul className="divide-y divide-gray-700">
+                    {musics.map((music, index) => (
+                        <li 
+                            key={index}
+                            className="
+                                flex items-center justify-between px-3 py-2
+                                hover:bg-white/10 rounded-md transition group"
+                        >
+                            <span className="w-6 text-gray-400">
+                                {index + 1}
+                            </span>
+
+                            <div className="flex-1 ml-3">
+                                <p className="text-sm font-medium">
+                                    {music.title}
+                                </p>
+                                <p className="text-xs text-gray-400">
+                                    {music.channel}
+                                </p>
+                            </div>
+
+                            <button 
+                                onClick={() => { setSelectedUrl(String(music.id)), setShowPrompt(true) }}
+                                className="
+                                    opacity-0 group-hover:opacity-100 flex items-center gap-2
+                                    text-sm text-[#1db954] hover:scale-105 transition cursor-pointer"
+                            >
+                                <FaPlus />
+                                Adicionar
+                            </button> 
                         </li>
                     ))}
                 </ul>
