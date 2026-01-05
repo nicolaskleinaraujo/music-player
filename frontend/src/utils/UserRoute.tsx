@@ -13,7 +13,7 @@ const UserRoute = () => {
         if (authLoading) {
             return
         }
-    
+
         if (authUserId === 0) {
             return <Navigate to="/login" replace />
         } else if (authUserId !== 0) {
