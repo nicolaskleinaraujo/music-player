@@ -1,9 +1,10 @@
 // Modules
 import dbFetch from "../utils/axios"
 import { useContext, useEffect, useState } from "react"
-import { useSearchParams } from "react-router-dom"
+import { useSearchParams, useNavigate } from "react-router-dom"
 import { UserContext } from "../context/UserContext"
-import { FaPlus } from "react-icons/fa"
+import { LoadingContext } from "../context/LoadingContext"
+import { FaArrowLeft, FaPlus } from "react-icons/fa"
 import PlaylistPrompt from "../components/PlaylistPrompt"
 
 type Music = {
@@ -17,9 +18,11 @@ type Music = {
 
 const Search = () => {
     const { userId, playlists } = useContext(UserContext)
+    const { setLoading } = useContext(LoadingContext)
 
     const [searchParams] = useSearchParams()
     const query = searchParams.get("q")
+    const navigate = useNavigate()
 
     const [musics, setMusics] = useState<Music[]>([])
     const [showPrompt, setShowPrompt] = useState(false)
@@ -27,9 +30,17 @@ const Search = () => {
 
     const getMusics = async() => {
         try {
-            // TODO add loading state
+            if (query === "") {
+                navigate("/")
+                return
+            }
+
+            setLoading(true)
+
             const res = await dbFetch.get(`searchmusic?query=${query}`)
+
             setMusics(res.data.musics)
+            setLoading(false)
         } catch (error) {
             // TODO add toast error
             console.log(error)
@@ -37,11 +48,12 @@ const Search = () => {
     }
 
     const addMusic = async(playlistId: number) => {
-        // TODO add loading state
         setShowPrompt(false)
+        setLoading(true)
 
         try {
             if (selectedUrl === "") {
+                setLoading(false)
                 return
             }
 
@@ -51,10 +63,16 @@ const Search = () => {
                 userId,
             })
 
-            console.log(res.data)
+            if(res.status === 201) {
+                setLoading(false)
+                navigate("/")
+            }
+
+            // TODO add error capture if add music fails
         } catch (error) {
             // TODO add toast error
             console.log(error)
+            setLoading(false)
         }
     }
 
@@ -64,6 +82,17 @@ const Search = () => {
 
     return (
         <div className="text-white w-full max-w-3xl mx-auto px-4 my-10">
+            <div className="flex items-center gap-3 mb-4">
+                <button
+                    onClick={() => navigate("/")}
+                    className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition"
+                >
+                    <FaArrowLeft />
+                    Voltar
+                </button>
+            </div>
+
+
             <h1 className="text-xl font-bold mb-6 text-center">
                 Resultados para{" "}
                 <span className="text-[#1db954]">{query}</span>
