@@ -59,7 +59,6 @@ const Search = () => {
 
     useEffect(() => {
         getMusics()
-        console.log(playlists)
     }, [])
 
     return (

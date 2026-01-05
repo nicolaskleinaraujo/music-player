@@ -6,6 +6,7 @@ import { useState } from "react"
 const SearchBox = () => {
     const [query, setQuery] = useState("")
     const [suggestedMusics, setSuggestedMusics] = useState([])
+    const [isFocused, setIsFocused] = useState(false)
 
     const getMusicSuggestion = async(q: string) => {
         try {
@@ -18,29 +19,34 @@ const SearchBox = () => {
     }
 
     return (
-        <div className="flex flex-col justify-center items-center">
-            <div className="w-40 bg-white">
+        <div className="w-full max-w-md mx-auto text-white">
+            <div className="relative">
                 <input 
                     onChange={(e) => {
                         setQuery(e.target.value)
                         getMusicSuggestion(e.target.value)
                     }}
                     value={query}
-                    className="bg-black w-32 text-white"
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setTimeout(() => setIsFocused(false), 100)}
+                    placeholder="Pesquisar musicas..."
+                    className="w-full bg-[#121212] text-white
+                        px-4 py-2 rounded-md
+                        border border-gray-700
+                        focus:outline-none focus:border-[#1db954]
+                        placeholder-gray-400"
                 />
             </div>
-            {suggestedMusics && (
-                <div>
-                    <ul>
-                        {suggestedMusics.map((suggestedMusic) => (
-                            <li>
-                                <Link to={`/search?q=${suggestedMusic[0]}`}>
-                                    {suggestedMusic[0]}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+            {isFocused && suggestedMusics.length > 0 && (
+                <ul className="mt-2 bg-[#181818] rounded-md overflow-hidden divide-y divide-gray-700">
+                    {suggestedMusics.map((suggestedMusic, index) => (
+                        <li key={index}>
+                            <Link to={`/search?q=${suggestedMusic[0]}`} className="block px-4 py-2 hover:bg-white/10 transition hover:text-[#1db954] text-sm">
+                                {suggestedMusic[0]}
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
             )}
         </div>
     )

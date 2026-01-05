@@ -4,7 +4,6 @@ import { UserContext } from "../context/UserContext"
 import createPlaylist from "../configs/createPlaylist"
 import MusicPlayer from "../components/MusicPlayer"
 import Playlists from "../components/Playlists"
-import GoogleAuth from "../components/GoogleAuth"
 import SearchBox from "../components/SearchBox"
 
 const Home = () => {
@@ -36,7 +35,7 @@ const Home = () => {
             />
 
             <button 
-                className="border-2 border-white rounded-md p-2"
+                className="border-2 border-white rounded-md p-2 mb-40"
                 onClick={() => handleCreatePlaylist()}
             >
                 Nova Playlist
@@ -47,8 +46,6 @@ const Home = () => {
                 currentIndex={currentIndex}
                 setCurrentIndex={setCurrentIndex}
             />
-
-            <GoogleAuth />
         </div>
     )
 }
