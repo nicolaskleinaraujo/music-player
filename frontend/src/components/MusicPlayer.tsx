@@ -28,6 +28,7 @@ const MusicPlayer = ({ musics, currentIndex, setCurrentIndex }: MusicPlayerProps
 
         const fetchMusic = async() => {
             try {
+                // FIXME get music by id, not filepath
                 const response = await dbFetch.get(`/music?fileName=${encodeURIComponent(currentMusic.filePath)}`, {
                     responseType: "blob",
                 })
