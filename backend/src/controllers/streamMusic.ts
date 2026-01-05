@@ -28,20 +28,25 @@ const streamMusic = async(req: Request, res: Response) => {
         const range = req.headers.range
 
         if (!range) {
-            res.writeHead(200, {
-                "content-length": fileSize,
+            const chunkSize = 320 * 1024
+            const end = Math.min(chunkSize - 1, fileSize - 1)
+
+            res.writeHead(206, {
+                "Content-Range": `bytes 0-${end}/${fileSize}`,
+                "Accept-Ranges": "bytes",
+                "content-length": chunkSize,
                 "content-type": "audio/mpeg",
+                "X-Total-Size": fileSize,
             })
 
-            return fs.createReadStream(musicPath).pipe(res)
+            return fs.createReadStream(musicPath, { start: 0, end }).pipe(res)
         }
 
         const parts = range.replace(/bytes=/, "").split("-")
-        const start = parseInt(parts[0], 10)
-        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1
+        const start = Number(parts[0])
+        const end = parts[1] ? Number(parts[1]) : fileSize - 1
 
         const chunkSize = end - start + 1
-        const file = fs.createReadStream(musicPath, { start, end })
 
         res.writeHead(206, {
             "Content-Range": `bytes ${start}-${end}/${fileSize}`,
@@ -50,7 +55,7 @@ const streamMusic = async(req: Request, res: Response) => {
             "Content-Type": "audio/mpeg",
         })
 
-        file.pipe(res)
+        fs.createReadStream(musicPath, { start, end }).pipe(res)
     } catch (error) {
         res.status(500).json({ msg: "Erro interno, tente novamente", error })
     }

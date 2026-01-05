@@ -39,6 +39,7 @@ const Playlists = ({ userId, playlists, currentPlaylist, setCurrentPlaylist, cur
     }
 
     const handlePlay = (musics: any[], index: number) => {
+        // FIXME fix the out of index music stream
         setCurrentPlaylist(musics)
         setCurrentIndex(index)
     }

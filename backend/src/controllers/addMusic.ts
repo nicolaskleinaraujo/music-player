@@ -93,6 +93,7 @@ const addMusic = async(req: Request, res: Response) => {
 
         // Fetches the music download URL and saves it to internal storage 
         https.get(urlGen.data.url, (response) => {
+            // FIXME puts the request to await the download to finishes
             if (response.statusCode !== 200) {
                 res.status(500).json({ msg: "Erro interno, tente novamente" })
                 return
