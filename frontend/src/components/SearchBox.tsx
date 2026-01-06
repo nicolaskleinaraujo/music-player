@@ -28,7 +28,7 @@ const SearchBox = () => {
                     }}
                     value={query}
                     onFocus={() => setIsFocused(true)}
-                    onBlur={() => setTimeout(() => setIsFocused(false), 100)}
+                    onBlur={() => setTimeout(() => setIsFocused(false), 200)}
                     placeholder="Pesquisar musicas..."
                     className="w-full bg-[#121212] text-white
                         px-4 py-2 rounded-md
@@ -37,7 +37,7 @@ const SearchBox = () => {
                         placeholder-gray-400"
                 />
             </div>
-            {isFocused && suggestedMusics.length > 0 && (
+            {isFocused && query !== "" && suggestedMusics.length > 0 && (
                 <ul className="mt-2 bg-[#181818] rounded-md overflow-hidden divide-y divide-gray-700">
                     {suggestedMusics.map((suggestedMusic, index) => (
                         <li key={index}>

@@ -1,6 +1,5 @@
 // Modules
 import type { Dispatch, SetStateAction } from "react"
-import addMusic from "../configs/addMusic"
 import { FaPlay } from "react-icons/fa"
 
 type Music = {
@@ -20,7 +19,6 @@ type Playlist = {
 }
 
 interface PlaylistsProps {
-    userId: number,
     playlists: Playlist[],
     currentPlaylist: any[]
     setCurrentPlaylist: Dispatch<SetStateAction<any[]>>
@@ -28,18 +26,8 @@ interface PlaylistsProps {
     setCurrentIndex: Dispatch<SetStateAction<number>>
 }
 
-const Playlists = ({ userId, playlists, currentPlaylist, setCurrentPlaylist, currentIndex, setCurrentIndex }: PlaylistsProps) => {
-    const handleAddMusic = async(playlistId: number, userId: number) => {
-        try {
-            const res = await addMusic(playlistId, userId)
-            if (res) location.reload()
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const handlePlay = (musics: any[], index: number) => {
-        // FIXME fix the out of index music stream
+const Playlists = ({ playlists, currentPlaylist, setCurrentPlaylist, currentIndex, setCurrentIndex }: PlaylistsProps) => {
+    const handlePlay = (musics: Music[], index: number) => {
         setCurrentPlaylist(musics)
         setCurrentIndex(index)
     }
@@ -66,7 +54,7 @@ const Playlists = ({ userId, playlists, currentPlaylist, setCurrentPlaylist, cur
                                 className={
                                     `flex items-center justify-between px-3 py-2 hover:bg-white/10 cursor-pointer group hover:rounded-md
                                     ${
-                                        currentPlaylist.length !== 0 ? 
+                                        currentPlaylist.length > currentIndex && currentPlaylist.length !== 0 ? 
                                             currentPlaylist[currentIndex].id === music.id ? 
                                                 "text-[#1db954]" : 
                                                 "text-white"
@@ -94,13 +82,6 @@ const Playlists = ({ userId, playlists, currentPlaylist, setCurrentPlaylist, cur
                             </li>
                         ))}
                     </ul>
-
-                    <button
-                        className="mt-3 border-2 border-white rounded-md px-3 py-1 hover:bg-white/10 transition"
-                        onClick={() => handleAddMusic(playlist.id, userId)}
-                        >
-                        Adicionar Música
-                    </button>
                 </div>
             ))}
         </div>

@@ -26,7 +26,6 @@ const Home = () => {
             <SearchBox />
 
             <Playlists 
-                userId={userId}
                 playlists={playlists}
                 currentPlaylist={currentPlaylist}
                 setCurrentPlaylist={setCurrentPlaylist}

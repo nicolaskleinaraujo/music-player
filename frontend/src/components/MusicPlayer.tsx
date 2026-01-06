@@ -1,7 +1,6 @@
 // Modules
 import "react-h5-audio-player/lib/styles.css"
 import AudioPlayer from "react-h5-audio-player"
-import dbFetch from "../utils/axios"
 import { useEffect, useState } from "react"
 
 type Music = {
@@ -26,25 +25,9 @@ const MusicPlayer = ({ musics, currentIndex, setCurrentIndex }: MusicPlayerProps
     useEffect(() => {
         if (!currentMusic) return
 
-        const fetchMusic = async() => {
-            try {
-                // FIXME get music by id, not filepath
-                const response = await dbFetch.get(`/music?fileName=${encodeURIComponent(currentMusic.filePath)}`, {
-                    responseType: "blob",
-                })
+        const url = `${import.meta.env.VITE_API_URL}music?fileName=${encodeURIComponent(currentMusic.filePath)}`
 
-                const url = URL.createObjectURL(response.data)
-                setAudioUrl(url)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        fetchMusic()
-
-        return () => {
-            if (audioUrl) URL.revokeObjectURL(audioUrl)
-        }
+        setAudioUrl(url)
     }, [currentMusic])
 
     return (
