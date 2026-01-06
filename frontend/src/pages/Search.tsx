@@ -10,10 +10,7 @@ import PlaylistPrompt from "../components/PlaylistPrompt"
 type Music = {
     id: number,
     title: string,
-    channel: string,
-    url: string,
-    filePath: string,
-    playlistId: number,
+    channelTitle: string,
 }
 
 const Search = () => {
@@ -116,7 +113,7 @@ const Search = () => {
                                     {music.title}
                                 </p>
                                 <p className="text-xs text-gray-400">
-                                    {music.channel}
+                                    {music.channelTitle}
                                 </p>
                             </div>
 
