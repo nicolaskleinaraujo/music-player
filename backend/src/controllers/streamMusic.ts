@@ -34,9 +34,10 @@ const streamMusic = async(req: Request, res: Response) => {
             res.writeHead(206, {
                 "Content-Range": `bytes 0-${end}/${fileSize}`,
                 "Accept-Ranges": "bytes",
-                "content-length": chunkSize,
-                "content-type": "audio/mpeg",
-                "X-Total-Size": fileSize,
+                "Content-Length": end + 1,
+                "Content-Type": "audio/mpeg",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Expose-Headers": "Content-Range, Content-Length",
             })
 
             return fs.createReadStream(musicPath, { start: 0, end }).pipe(res)
@@ -53,6 +54,8 @@ const streamMusic = async(req: Request, res: Response) => {
             "Accept-Ranges": "bytes",
             "Content-Length": chunkSize,
             "Content-Type": "audio/mpeg",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Expose-Headers": "Content-Range, Content-Length",
         })
 
         fs.createReadStream(musicPath, { start, end }).pipe(res)
