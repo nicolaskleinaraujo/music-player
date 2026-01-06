@@ -9,17 +9,27 @@ interface MusicDTO {
 
 const streamMusic = async(req: Request, res: Response) => {
     try {
+        if (req.method === "OPTIONS") {
+            res.writeHead(204, {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Range",
+                "Access-Control-Allow-Methods": "GET, OPTIONS",
+                "Access-Control-Expose-Headers": "Content-Range, Content-Length",
+            })
+            return res.end()
+        }
+
         const { fileName }: MusicDTO = req.query
 
         if (!fileName) {
-            res.status(400).json({ msg: "Informações insuficientes" })
+            res.status(400)
             return
         }
 
         const musicPath = path.resolve(__dirname, "../../musics", fileName)
 
         if (!fs.existsSync(musicPath)) {
-            res.status(404).json({ msg: "Musica não encontrada" })
+            res.status(404)
             return
         }
 
@@ -27,9 +37,19 @@ const streamMusic = async(req: Request, res: Response) => {
         const fileSize = stat.size
         const range = req.headers.range
 
+        if (fileSize <= 0) {
+            res.status(503)
+            return
+        }
+
         if (!range) {
             const chunkSize = 320 * 1024
             const end = Math.min(chunkSize - 1, fileSize - 1)
+
+            if (0 > end) {
+                res.status(416)
+                return
+            }
 
             res.writeHead(206, {
                 "Content-Range": `bytes 0-${end}/${fileSize}`,
@@ -37,6 +57,7 @@ const streamMusic = async(req: Request, res: Response) => {
                 "Content-Length": end + 1,
                 "Content-Type": "audio/mpeg",
                 "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Range",
                 "Access-Control-Expose-Headers": "Content-Range, Content-Length",
             })
 
@@ -44,10 +65,19 @@ const streamMusic = async(req: Request, res: Response) => {
         }
 
         const parts = range.replace(/bytes=/, "").split("-")
-        const start = Number(parts[0])
-        const end = parts[1] ? Number(parts[1]) : fileSize - 1
+        let start = Number(parts[0])
+        let end = parts[1] ? Number(parts[1]) : fileSize - 1
+
+        if (isNaN(start) || start < 0) start = 0
+        if (isNaN(end) || end < start) end = fileSize - 1
+        if (end >= fileSize) end = fileSize - 1
 
         const chunkSize = end - start + 1
+
+        if (start > end) {
+            res.status(416)
+            return
+        }
 
         res.writeHead(206, {
             "Content-Range": `bytes ${start}-${end}/${fileSize}`,
@@ -55,12 +85,13 @@ const streamMusic = async(req: Request, res: Response) => {
             "Content-Length": chunkSize,
             "Content-Type": "audio/mpeg",
             "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Range",
             "Access-Control-Expose-Headers": "Content-Range, Content-Length",
         })
 
         fs.createReadStream(musicPath, { start, end }).pipe(res)
     } catch (error) {
-        res.status(500).json({ msg: "Erro interno, tente novamente", error })
+        res.status(500)
     }
 }
 
