@@ -22,6 +22,13 @@ const addMusic = async(req: Request, res: Response) => {
             return
         }
 
+        // Checks if playlist exists
+        const checkPlaylist = await prisma.playlist.findUnique({ where: { id: playlistId }, include: { musics: true } })
+        if (!checkPlaylist) {
+            res.status(404).json({ msg: "Playlist informada incorreta" })
+            return
+        }
+
         // Checks if the music is already downloaded
         const checksMusic = await prisma.music.findFirst({ where: { url } })
         if (checksMusic) {
@@ -31,32 +38,15 @@ const addMusic = async(req: Request, res: Response) => {
                     channel: checksMusic.channel,
                     url,
                     filePath: checksMusic.filePath,
-                    Playlist: { connect: { id: playlistId } }
+                    Playlist: { connect: { id: playlistId } },
+                    ready: true,
+                    order: checkPlaylist.musics.length,
                 }
             })
 
             res.status(201).json({ msg: "Musica adicionada com sucesso", music })
             return
         }
-
-        // Gets music infos and creates music instance on database
-        const musicInfos = await axios.get(`https://www.youtube.com/oembed?url=${url}&format=json`)
-
-        let music = await prisma.music.create({
-            data: {
-                title: musicInfos.data.title,
-                channel: musicInfos.data.author_name,
-                url,
-                // FIXME remove this filepath placeholder
-                filePath: "",
-                Playlist: { connect: { id: playlistId } }
-            }
-        })
-
-        const musicDir = path.resolve(__dirname, "../../musics")
-        if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir, { recursive: true })
-
-        const musicFile = path.join(musicDir, `${music.id}.mp3`)
 
         // Generetes the auth token
         const agent = new SocksProxyAgent(String(process.env.PROXY_URL))
@@ -91,12 +81,29 @@ const addMusic = async(req: Request, res: Response) => {
             proxy: false,
         })
 
+        // Gets music infos and creates music instance on database
+        const musicInfos = await axios.get(`https://www.youtube.com/oembed?url=${url}&format=json`)
+
+        let music = await prisma.music.create({
+            data: {
+                title: musicInfos.data.title,
+                channel: musicInfos.data.author_name,
+                url,
+                Playlist: { connect: { id: playlistId } },
+                ready: false,
+                order: checkPlaylist.musics.length,
+            }
+        })
+
+        const musicDir = path.resolve(__dirname, "../../musics")
+        if (!fs.existsSync(musicDir)) fs.mkdirSync(musicDir, { recursive: true })
+
+        const musicFile = path.join(musicDir, `${music.id}.mp3`)
+
         // Fetches the music download URL and saves it to internal storage
         await downloadMusic(urlGen.data.url, musicFile)
 
-        // Checks if file is empty
         if (fs.statSync(musicFile).size === 0) {
-            console.log(fs.statSync(musicFile).size)
             await prisma.music.delete({ where: { id: music.id } })
 
             res.status(500).json({ msg: "Erro ao baixar arquivo" })
