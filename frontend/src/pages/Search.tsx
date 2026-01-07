@@ -14,7 +14,7 @@ type Music = {
 }
 
 const Search = () => {
-    const { userId, playlists } = useContext(UserContext)
+    const { userId, playlists, setPlaylists } = useContext(UserContext)
     const { setLoading } = useContext(LoadingContext)
 
     const [searchParams] = useSearchParams()
@@ -61,6 +61,17 @@ const Search = () => {
             })
 
             if(res.status === 201) {
+                setPlaylists(prevPlaylists => prevPlaylists.map(playlist => {
+                    if (playlist.id === playlistId) {
+                        return {
+                            ...playlist,
+                            musics: [...playlist.musics, res.data.music]
+                        }
+                    }
+
+                    return playlist
+                }))
+
                 setLoading(false)
                 navigate("/")
             }
