@@ -24,11 +24,13 @@ model Playlist {
 }
 
 model Music {
-  id       Int    @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   title    String
   channel  String
   url      String
   filePath String?
+  ready    Boolean
+  order    Int
 
   Playlist   Playlist @relation(fields: [playlistId], references: [id])
   playlistId Int

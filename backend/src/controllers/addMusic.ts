@@ -3,8 +3,8 @@ import { Request, Response } from "express"
 import prisma from "../config/prisma"
 import path from "node:path"
 import fs from "node:fs"
-import https from "node:https"
 import axios from "axios"
+import downloadMusic from "../config/downloadMusic"
 import { SocksProxyAgent } from "socks-proxy-agent"
 
 interface MusicDTO {
@@ -91,19 +91,17 @@ const addMusic = async(req: Request, res: Response) => {
             proxy: false,
         })
 
-        // Fetches the music download URL and saves it to internal storage 
-        https.get(urlGen.data.url, (response) => {
-            // FIXME puts the request to await the download to finishes
-            if (response.statusCode !== 200) {
-                res.status(500).json({ msg: "Erro interno, tente novamente" })
-                return
-            }
+        // Fetches the music download URL and saves it to internal storage
+        await downloadMusic(urlGen.data.url, musicFile)
 
-            const fileStream = fs.createWriteStream(musicFile)
-            response.pipe(fileStream)
+        // Checks if file is empty
+        if (fs.statSync(musicFile).size === 0) {
+            console.log(fs.statSync(musicFile).size)
+            await prisma.music.delete({ where: { id: music.id } })
 
-            fileStream.on("finish", () => fileStream.close())
-        })
+            res.status(500).json({ msg: "Erro ao baixar arquivo" })
+            return
+        }
 
         music = await prisma.music.update({
             where: { id: music.id },
